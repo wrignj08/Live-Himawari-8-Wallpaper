@@ -3,12 +3,11 @@ import logic
 import json
 import os
 import funcs
-from glob import glob
 
 settings,settings_path = funcs.get_settings()
 print(settings)
 
-icon_path = '/Users/nicholaswright/Documents/Live Himawari 8 Wallpaper/icon.png'
+icon_path = os.path.expanduser("~/Documents/Live-Himawari-8-Wallpaper/icon.png")
 
 def start():
     print('setting json to True')

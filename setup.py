@@ -8,7 +8,7 @@ Usage:
 from setuptools import setup
 
 APP = ['LH8WP.py']
-DATA_FILES = ['icon.png','H8WP_settings.json']
+DATA_FILES = ['icon.png']
 OPTIONS = {}
 
 setup(

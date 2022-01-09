@@ -6,7 +6,7 @@ import urllib.request
 from PIL import Image
 
 def get_settings():
-    settings_path = os.path.expanduser("~/Documents/Live Himawari 8 Wallpaper/H8WP_settings.json")
+    settings_path = os.path.expanduser("~/Documents/Live-Himawari-8-Wallpaper/H8WP_settings.json")
     # check is settings file exists
     if os.path.isfile(settings_path):
         with open(settings_path) as json_file:

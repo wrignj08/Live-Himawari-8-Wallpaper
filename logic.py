@@ -46,7 +46,7 @@ def main():
         tile_list = list(itertools.product(range(0,row_col_count), range(0,row_col_count)))
 
         # set directory for images
-        working_path = os.path.expanduser("~/Documents/Live Himawari 8 Wallpaper/images")
+        working_path = os.path.expanduser("~/Documents/Live-Himawari-8-Wallpaper/images")
         pathlib.Path(working_path).mkdir(parents=True, exist_ok=True)
 
         # url format for downlading images
