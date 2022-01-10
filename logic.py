@@ -101,9 +101,21 @@ def main():
         else:
             print(f'nothing new, sleeping for 10 minutes')
             for i in range(0,600):
-                settings, _ = funcs.get_settings()
+                settings, settings_path = funcs.get_settings()
                 live = bool(settings['live'])
                 if not live:
                     break
+
+                refresh = bool(settings['refresh'])
+                if refresh:
+                    if os.path.isfile(final_output):
+                        os.remove(final_output)
+
+                    settings['refresh'] = False
+                    with open(settings_path, 'w') as json_file:
+                        json.dump(settings, json_file)
+                    break
+
+
                 else:
                     time.sleep(1)

@@ -4,12 +4,10 @@ import json
 import os
 import funcs
 
-settings,settings_path = funcs.get_settings()
-print(settings)
-
 icon_path = os.path.expanduser("~/Documents/Live-Himawari-8-Wallpaper/icon.png")
 
 def start():
+    settings,settings_path = funcs.get_settings()
     print('setting json to True')
     settings['live'] = True
     with open(settings_path, 'w') as json_file:
@@ -20,6 +18,7 @@ def start():
 start()
 
 def stop():
+    settings,settings_path = funcs.get_settings()
     print('setting json to False')
     settings['live'] = False
     with open(settings_path, 'w') as json_file:
@@ -33,16 +32,25 @@ def onoff(sender):
     else:
         stop()
 
+def refresh(sender):
+
+    settings,settings_path = funcs.get_settings()
+    settings['refresh'] = True
+    with open(settings_path, 'w') as json_file:
+        json.dump(settings, json_file)
+
 
 def clean_up_before_quit(sender):
     stop()
     rumps.quit_application()
 
 def set_res(sender):
+    settings,settings_path = funcs.get_settings()
     settings['quality'] = res_options.index(sender.title)
     with open(settings_path, 'w') as json_file:
         json.dump(settings, json_file)
     print(f'set res to {sender.title}')
+
 
 app = rumps.App("H8WP",quit_button=None, icon=icon_path)
 
@@ -56,6 +64,8 @@ Active.state = 1
 app.menu = Active
 
 app.menu = [rumps.MenuItem('Quality'), res_menu],
+
+app.menu = rumps.MenuItem("Refresh",callback=refresh)
 
 app.menu = rumps.MenuItem("Quit",callback=clean_up_before_quit)
 

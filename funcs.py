@@ -5,6 +5,7 @@ import numpy as np
 import urllib.request
 from PIL import Image
 
+
 def get_settings():
     settings_path = os.path.expanduser("~/Documents/Live-Himawari-8-Wallpaper/H8WP_settings.json")
     # check is settings file exists
@@ -16,7 +17,8 @@ def get_settings():
         settings = {'quality' : 0,
         'dl_threads' : 4,
         'live' : False,
-        'wp_path': ''}
+        'wp_path': '',
+        'refresh': False}
 
         with open(settings_path, 'w') as json_file:
             json.dump(settings, json_file)
