@@ -6,6 +6,14 @@ import funcs
 
 icon_path = os.path.expanduser("~/Documents/Live-Himawari-8-Wallpaper/icon.png")
 
+def onoff(sender):
+    sender.state = not sender.state
+    print(sender.state)
+    if sender.state:
+        start()
+    else:
+        stop()
+
 def start():
     settings,settings_path = funcs.get_settings()
     print('setting json to True')
@@ -23,14 +31,6 @@ def stop():
     settings['live'] = False
     with open(settings_path, 'w') as json_file:
         json.dump(settings, json_file)
-
-def onoff(sender):
-    sender.state = not sender.state
-    print(sender.state)
-    if sender.state:
-        start()
-    else:
-        stop()
 
 def refresh(sender):
 

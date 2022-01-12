@@ -9,10 +9,11 @@ from setuptools import setup
 
 APP = ['LH8WP.py']
 DATA_FILES = ['icon.png']
-OPTIONS = {}
+OPTIONS = {'iconfile':'app_icon.icns'}
 
 setup(
     app=APP,
+    name='H8WP',
     data_files=DATA_FILES,
     options={'py2app': OPTIONS},
     setup_requires=['py2app'],
