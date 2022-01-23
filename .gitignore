@@ -2,3 +2,11 @@
 .DS_Store
 
 __pycache__/
+
+.eggs/altgraph-0.17.2-py3.8.egg/altgraph/
+
+.eggs/altgraph-0.17.2-py3.8.egg/EGG-INFO/
+
+.eggs/macholib-1.15.2-py3.8.egg/EGG-INFO/
+
+.eggs/py2app-0.26.1-py3.8.egg/py2app/recipes/
