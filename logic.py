@@ -118,6 +118,8 @@ def main():
             if verbose:
                 print(f'nothing new, sleeping for 5 minutes')
             for i in range(0,300):
+                print(f'sleeping {i}')
+
                 settings = funcs.get_settings()
                 live = bool(settings['live'])
                 if not live:
