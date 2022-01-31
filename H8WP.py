@@ -1,12 +1,9 @@
 import rumps
 import logic
-import json
-import os
 import funcs
-from rumps import *
+# from rumps import *
 
 verbose = True
-icon_path = os.path.expanduser("~/Documents/Live-Himawari-8-Wallpaper/menu_icon.png")
 
 def onoff(sender):
     sender.state = not sender.state
@@ -85,24 +82,12 @@ for icon in ['🌏','🛰','🌐']:
 # recalc image age every 30 secs
 @rumps.timer(30)
 def update_age(_):
-    # remove last image age
-    try:
-        del app.menu['image_age']
-    except:
-        print('no image age to remove')
-        pass
-    app.menu.setdefault('image_age', MenuItem(funcs.image_age_str()))
+    app.menu['Age'].title = funcs.image_age_str()
 
+# check state every second
 @rumps.timer(1)
 def update_state(_):
-    # remove last image age
-    try:
-        del app.menu['state']
-    except:
-        print('no state to remove')
-        pass
-    app.menu.setdefault('state', MenuItem(funcs.read_state()))
-
+    app.menu['State'].title = funcs.read_state()
 
 res_options = ('1100x1100', '2200x2200', '4400x4400', '8800x8800','16000x16000')
 res_menu = []
@@ -114,11 +99,12 @@ Active = rumps.MenuItem("Active",callback=onoff)
 Active.state = 1
 app.menu = Active
 
-
 app.menu = [[rumps.MenuItem('Resolution'), res_menu],
             [rumps.MenuItem('Icon'), icon_menu],
             rumps.MenuItem("Refresh now",callback=refresh),
             None,
+            rumps.MenuItem("Age"),
+            rumps.MenuItem("State"),
             rumps.MenuItem("Quit",callback=clean_up_before_quit)]
 
 # now that the menu is created add the check mark on the current resolution

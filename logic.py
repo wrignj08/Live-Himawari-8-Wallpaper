@@ -22,7 +22,7 @@ def main():
         print('started main')
 
     funcs.set_state('Starting')
-
+    # keep looping untill told to stop
     while True:
 
         settings = funcs.get_settings()
@@ -34,10 +34,10 @@ def main():
             if verbose:
                 print('stopped')
             funcs.set_state('Stopped')
-
+            # break look if no longer live
             break
 
-        # tile row and col count
+        # tile row and col count, 2 means the image is built from 2x2 tiles
         image_size = [2,4,8,16,20]
 
         # set quality
@@ -52,6 +52,7 @@ def main():
 
         # set directory for images
         working_path = os.path.expanduser("~/Documents/Live-Himawari-8-Wallpaper/images")
+        # make directory
         pathlib.Path(working_path).mkdir(parents=True, exist_ok=True)
 
         # url format for downlading images
@@ -62,7 +63,7 @@ def main():
 
         latest_date,latest_time = funcs.get_latest_time()
 
-    #     check if this image is already made
+        # check if this image is already made
         final_output = os.path.join(working_path,(latest_date+latest_time).replace('/','_')+f'_h8wp_{quality}.png')
         if verbose:
             print(final_output)
@@ -77,18 +78,16 @@ def main():
             if verbose:
                 print('downloading tiles')
             funcs.set_state('Downloading tiles')
+            # download images
             with ThreadPool(thread_count) as tp:
                 files = list(tp.imap(funcs.prep_download,args))
-
-            # files = []
-            # for i in args:
-            #     files.append(funcs.prep_download(i))
 
             # mosaic all images
             if verbose:
                 print('making mosaic')
             funcs.set_state('Making mosaic')
-            # mosaiced_array = funcs.mosaic(files,array_px)
+
+            # make mosaic using PIL
             mosaiced_image = funcs.PIL_mosaic(files,array_px)
 
             # grab a list of any old mosaics so we can remove them later
@@ -97,8 +96,8 @@ def main():
             # save master array as image
             if verbose:
                 print('saving wallpaper')
-            # mosaiced_image = Image.fromarray(mosaiced_array).convert('RGB')
             mosaiced_image.save(final_output)
+
             if verbose:
                 print('setting wallpaper')
             # funcs.set_wallpaper(final_output)
@@ -120,10 +119,12 @@ def main():
             funcs.write_settings(settings)
 
         else:
+            # if there is nothing new to download, sleep
             if verbose:
                 print(f'nothing new, sleeping for 5 minutes')
             sleep_time  = 300
             for i in range(0,sleep_time):
+                # calc remaining sleep time and set state
                 sleep_time_remaining = sleep_time-i
                 if sleep_time_remaining > 60:
                     sleep_time_remaining_str = f'{round(sleep_time_remaining/60)} mins'
@@ -131,18 +132,18 @@ def main():
                     sleep_time_remaining_str = f'{sleep_time_remaining} secs'
 
                 funcs.set_state(f'Next check {sleep_time_remaining_str}')
-
+                # check the settings file
                 settings = funcs.get_settings()
-                # live = bool(settings['live'])
+                # if live is False end sleep early
                 if not bool(settings['live']):
                     break
-
-                refresh = bool(settings['refresh'])
-                if refresh:
+                # if refresh is set end sleep early
+                if bool(settings['refresh']):
                     funcs.set_state('Refreshing')
+                    # remove old wallpaper
                     if os.path.isfile(final_output):
                         os.remove(final_output)
-
+                    # reset to False and end sleep early
                     settings['refresh'] = False
                     funcs.write_settings(settings)
                     break

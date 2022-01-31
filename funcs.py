@@ -2,8 +2,6 @@ import os
 import json
 import subprocess
 import requests
-import ast
-
 from PIL import Image
 import datetime
 from time import sleep
@@ -95,8 +93,7 @@ def image_age_str():
 
     if image_age<(60*60):
         friendly_age = f'{round(image_age/60)} mins'
-    # print(f'Image age {usefull_age}')
-    return f'Image {friendly_age} old'
+    return f'Image is {friendly_age} old'
 
 
 # open image with PIL and make sure it is valid
@@ -118,7 +115,7 @@ def download(download_url, full_path):
             tile_data = requests.get(download_url, timeout=30)
             with open(full_path, 'wb') as f:
                 f.write(tile_data.content)
-
+            # make sure image is valid
             if verify_image(full_path):
                 done = True
             else:
@@ -127,8 +124,6 @@ def download(download_url, full_path):
             set_state('Having trouble downloading images')
             print(f'failed to downlaod image {download_url} retrying {e}')
             sleep(2)
-        # download(download_url, full_path)
-
 
 #  create download url and file path then pass to downlaod func
 def prep_download(args):
@@ -143,10 +138,11 @@ def prep_download(args):
     download(download_url, full_path)
 #     return file path to so we can mosaic them
     return(full_path)
-
+    
+# use pil to build the mosaic
 def PIL_mosaic(files,array_px):
+    # make empty image to dump tiles into
     mosaic = Image.new('RGB', (array_px, array_px))
-
     for file in files:
         file_open = Image.open(file)
         tile_x,tile_y = os.path.basename(file).replace('.png','').split('_')[1:3]
@@ -154,6 +150,7 @@ def PIL_mosaic(files,array_px):
         mosaic.paste(file_open, (abs_x, abs_y))
     return mosaic
 
+# use apple script to apply wallpaper to all screens
 def set_wallpaper(final_output):
 
     SCRIPT = """/usr/bin/osascript<<END
