@@ -21,11 +21,11 @@ def main():
     if verbose:
         print('started main')
 
+    funcs.set_state('Starting')
+
     while True:
 
         settings = funcs.get_settings()
-
-
         quality = int(settings['quality'])
         thread_count = int(settings['dl_threads'])
         live = bool(settings['live'])
@@ -33,7 +33,7 @@ def main():
         if not live:
             if verbose:
                 print('stopped')
-            funcs.set_output_text('stopped')
+            funcs.set_state('Stopped')
 
             break
 
@@ -66,7 +66,7 @@ def main():
         final_output = os.path.join(working_path,(latest_date+latest_time).replace('/','_')+f'_h8wp_{quality}.png')
         if verbose:
             print(final_output)
-        funcs.set_output_text(final_output)
+        # funcs.set_state(final_output)
         if not os.path.isfile(final_output):
 
             args = []
@@ -76,14 +76,18 @@ def main():
             # downlaod multible images at one to speed up the process
             if verbose:
                 print('downloading tiles')
-            funcs.set_output_text('downloading tiles')
+            funcs.set_state('Downloading tiles')
             with ThreadPool(thread_count) as tp:
                 files = list(tp.imap(funcs.prep_download,args))
+
+            # files = []
+            # for i in args:
+            #     files.append(funcs.prep_download(i))
 
             # mosaic all images
             if verbose:
                 print('making mosaic')
-            funcs.set_output_text('making mosaic')
+            funcs.set_state('Making mosaic')
             mosaiced_array = funcs.mosaic(files,array_px)
 
             # grab a list of any old mosaics so we can remove them later
@@ -117,16 +121,24 @@ def main():
         else:
             if verbose:
                 print(f'nothing new, sleeping for 5 minutes')
-            for i in range(0,300):
-                print(f'sleeping {i}')
+            sleep_time  = 300
+            for i in range(0,sleep_time):
+                sleep_time_remaining = sleep_time-i
+                if sleep_time_remaining > 60:
+                    sleep_time_remaining_str = f'{round(sleep_time_remaining/60)} mins'
+                else:
+                    sleep_time_remaining_str = f'{sleep_time_remaining} secs'
+
+                funcs.set_state(f'Next check {sleep_time_remaining_str}')
 
                 settings = funcs.get_settings()
-                live = bool(settings['live'])
-                if not live:
+                # live = bool(settings['live'])
+                if not bool(settings['live']):
                     break
 
                 refresh = bool(settings['refresh'])
                 if refresh:
+                    funcs.set_state('Refreshing')
                     if os.path.isfile(final_output):
                         os.remove(final_output)
 
