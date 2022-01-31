@@ -1,8 +1,6 @@
 import os
 import json
 import subprocess
-import numpy as np
-# import urllib.request
 import requests
 import ast
 
@@ -117,9 +115,6 @@ def download(download_url, full_path):
     done = False
     while not done:
         try:
-            # print(download_url)
-            # print(full_path)
-            # urllib.request.urlretrieve(download_url, full_path)
             tile_data = requests.get(download_url, timeout=30)
             with open(full_path, 'wb') as f:
                 f.write(tile_data.content)
@@ -149,28 +144,15 @@ def prep_download(args):
 #     return file path to so we can mosaic them
     return(full_path)
 
+def PIL_mosaic(files,array_px):
+    mosaic = Image.new('RGB', (array_px, array_px))
 
-# open each image and place it into master array
-def mosaic(files,array_px):
-#     build empty array of correct shape to hold all images
-    array = np.empty([array_px,array_px,3])
     for file in files:
-#         open image and convert into array
-        pic = Image.open(file)
-        small_array = np.array(pic)
-#         empty images only have one band so we can filter them out
-        if len(small_array.shape)==3:
-#             from image name derive placement
-            tile_y,tile_x = os.path.basename(file).replace('.png','').split('_')[1:3]
-            abs_y,abs_x = int(tile_y)*550,int(tile_x)*550
-#             stuff the image into the master array
-            array[abs_x:abs_x+550,abs_y:abs_y+550] = small_array
-#     remove all temp files
-    for file in files:
-        os.remove(file)
-
-    return array.astype(np.uint8)
-
+        file_open = Image.open(file)
+        tile_x,tile_y = os.path.basename(file).replace('.png','').split('_')[1:3]
+        abs_y,abs_x = int(tile_y)*550,int(tile_x)*550
+        mosaic.paste(file_open, (abs_x, abs_y))
+    return mosaic
 
 def set_wallpaper(final_output):
 
@@ -181,5 +163,4 @@ def set_wallpaper(final_output):
                         end tell
                     end tell
                 """
-
     subprocess.Popen(SCRIPT%final_output, shell=True)

@@ -88,7 +88,8 @@ def main():
             if verbose:
                 print('making mosaic')
             funcs.set_state('Making mosaic')
-            mosaiced_array = funcs.mosaic(files,array_px)
+            # mosaiced_array = funcs.mosaic(files,array_px)
+            mosaiced_image = funcs.PIL_mosaic(files,array_px)
 
             # grab a list of any old mosaics so we can remove them later
             old_h8wb_files = glob(working_path+'/*.png')
@@ -96,7 +97,7 @@ def main():
             # save master array as image
             if verbose:
                 print('saving wallpaper')
-            mosaiced_image = Image.fromarray(mosaiced_array).convert('RGB')
+            # mosaiced_image = Image.fromarray(mosaiced_array).convert('RGB')
             mosaiced_image.save(final_output)
             if verbose:
                 print('setting wallpaper')
