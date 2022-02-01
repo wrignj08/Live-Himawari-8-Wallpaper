@@ -10,6 +10,9 @@ from glob import glob
 from PIL import Image
 from datetime import datetime
 from multiprocessing.pool import ThreadPool
+from multiprocessing import freeze_support
+
+freeze_support()
 
 verbose = True
 
