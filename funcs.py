@@ -5,9 +5,17 @@ import requests
 from PIL import Image
 import datetime
 from time import sleep
+from pathlib import Path
+
+def get_working_dir():
+    return os.path.expanduser("~/Documents/Live Himawari files")
 
 def get_settings_path():
-    return os.path.expanduser("~/Documents/Live-Himawari-8-Wallpaper/H8WP_settings.json")
+    return os.path.join(get_working_dir(),'LH_settings.json')
+
+def get_image_dir():
+    return os.path.join(get_working_dir(),'images')
+
 
 # returns settings dict from json settings file, if no file exists it will make one with defaults
 def get_settings():
@@ -138,7 +146,7 @@ def prep_download(args):
     download(download_url, full_path)
 #     return file path to so we can mosaic them
     return(full_path)
-    
+
 # use pil to build the mosaic
 def PIL_mosaic(files,array_px):
     # make empty image to dump tiles into

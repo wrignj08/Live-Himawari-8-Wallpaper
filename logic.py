@@ -1,4 +1,3 @@
-
 import os
 import time
 import json
@@ -17,10 +16,11 @@ freeze_support()
 verbose = True
 
 def main_thread():
-    thread = threading.Thread(target=lambda: threading.Thread(target=main()))
+    thread = threading.Thread(target=lambda: threading.Thread(target=main(),daemon = True))
     thread.start()
 
 def main():
+
     if verbose:
         print('started main')
 
@@ -54,9 +54,7 @@ def main():
         tile_list = list(itertools.product(range(0,row_col_count), range(0,row_col_count)))
 
         # set directory for images
-        working_path = os.path.expanduser("~/Documents/Live-Himawari-8-Wallpaper/images")
-        # make directory
-        pathlib.Path(working_path).mkdir(parents=True, exist_ok=True)
+        working_path = funcs.get_image_dir()
 
         # url format for downlading images
         url_template = 'https://himawari8.nict.go.jp/img/D531106/{}d/550/{}/{}_{}_{}.png'
@@ -67,7 +65,7 @@ def main():
         latest_date,latest_time = funcs.get_latest_time()
 
         # check if this image is already made
-        final_output = os.path.join(working_path,(latest_date+latest_time).replace('/','_')+f'_h8wp_{quality}.png')
+        final_output = os.path.join(working_path,(latest_date+latest_time).replace('/','_')+f'_LH_{quality}.png')
         if verbose:
             print(final_output)
         # funcs.set_state(final_output)
@@ -94,7 +92,7 @@ def main():
             mosaiced_image = funcs.PIL_mosaic(files,array_px)
 
             # grab a list of any old mosaics so we can remove them later
-            old_h8wb_files = glob(working_path+'/*.png')
+            old_lh_files = glob(working_path+'/*.png')
 
             # save master array as image
             if verbose:
@@ -109,7 +107,7 @@ def main():
             # remove old images
             if verbose:
                 print('Removing wallpaper')
-            for old_file in old_h8wb_files:
+            for old_file in old_lh_files:
                 os.remove(old_file)
             if verbose:
                 print('done')
@@ -134,7 +132,7 @@ def main():
                 else:
                     sleep_time_remaining_str = f'{sleep_time_remaining} secs'
 
-                funcs.set_state(f'Next check {sleep_time_remaining_str}')
+                funcs.set_state(f'Next check in {sleep_time_remaining_str}')
                 # check the settings file
                 settings = funcs.get_settings()
                 # if live is False end sleep early
