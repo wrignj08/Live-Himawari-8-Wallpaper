@@ -9,8 +9,8 @@ from glob import glob
 from PIL import Image
 from datetime import datetime
 from multiprocessing.pool import ThreadPool
+# necessary to make pyinstaller not spawn multiple apps
 from multiprocessing import freeze_support
-
 freeze_support()
 
 verbose = True
@@ -124,6 +124,7 @@ def main():
             if verbose:
                 print(f'nothing new, sleeping for 5 minutes')
             sleep_time  = 300
+
             for i in range(0,sleep_time):
                 # calc remaining sleep time and set state
                 sleep_time_remaining = sleep_time-i

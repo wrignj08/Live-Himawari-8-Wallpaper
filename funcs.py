@@ -57,7 +57,7 @@ def write_settings(settings):
 # set text state in settings json file
 def set_state(text):
     settings = get_settings()
-    settings['state'] = text
+    settings['state'] = '⚙️ '+text
     write_settings(settings)
 
 def read_state():
@@ -72,7 +72,7 @@ def get_latest_time():
     while latest_time is None:
         try:
             # print('trying to downlaod latest.json')
-            response_json = requests.get(url, timeout=20)#.content
+            response_json = requests.get(url, timeout=20)
             latest_date, latest_time = response_json.json()['date'].split(' ')
             latest_date = latest_date.replace('-','/')
             latest_time = latest_time.replace(':','')
@@ -101,7 +101,7 @@ def image_age_str():
 
     if image_age<(60*60):
         friendly_age = f'{round(image_age/60)} mins'
-    return f'Image is {friendly_age} old'
+    return f'⏳ Image is {friendly_age} old'
 
 
 # open image with PIL and make sure it is valid
