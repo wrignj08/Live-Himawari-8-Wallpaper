@@ -1,7 +1,9 @@
 # Live Himawari
 Live Himawari is a macOS menu bar application which sets your desktop wallpaper to the real time view from the Himawari 8 satellite. The imagery comes courtesy of <a href="https://himawari8.nict.go.jp">Himawari-8 Real-time</a>.
 
-<a href="https://github.com/wrignj08/Live_Himawari/raw/main/Live%20Himawari.zip" style='font-size:2em' download>Download Live Himawari 🌏</a>
+<a href="https://github.com/wrignj08/Live_Himawari/raw/main/Live%20Himawari.zip" download>Download Live Himawari 🌏</a>
+
+This app is unsigned, so to open it the first time you will need to right click on it and select 'Open'.
 
 <img src="https://raw.githubusercontent.com/wrignj08/Live_Himawari/main/images/menu.jpg" alt="menu" style="width:400px;">
 
