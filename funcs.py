@@ -159,13 +159,74 @@ def PIL_mosaic(files,array_px):
     return mosaic
 
 # use apple script to apply wallpaper to all screens
-def set_wallpaper(final_output):
+# def set_wallpaper(final_output):
+#
+#     SCRIPT = """/usr/bin/osascript<<END
+#                     tell application "System Events"
+#                         tell every desktop
+#                             set picture to "%s"
+#                         end tell
+#                     end tell
+#                 """
+#     subprocess.Popen(SCRIPT%final_output, shell=True)
 
+
+
+def check_if_in_apps_folder():
+    return(os.path.isdir('/Applications/Live Himawari.app'))
+
+def add_to_login_items():
+    SCRIPT = """/usr/bin/osascript<<END
+                    tell application "System Events" to make login item at end with properties {name: "Live Himawari",path:"/Applications/Live Himawari.app", hidden:false}
+                  """
+    subprocess.Popen(SCRIPT, shell=True)
+
+def remove_from_login_items():
+    SCRIPT = """/usr/bin/osascript<<END
+                    try
+	                   tell application "System Events" to delete login item "Live Himawari"
+                    end try
+                  """
+    subprocess.Popen(SCRIPT, shell=True)
+
+def check_if_in_login_items():
+    login_items = '''
+          tell application "System Events" to get the name of every login item
+      '''
+    proc = subprocess.Popen(['osascript', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    login_items, error = proc.communicate(login_items)
+    return 'Live Himawari' in login_items
+
+
+def set_wallpaper():
     SCRIPT = """/usr/bin/osascript<<END
                     tell application "System Events"
-                        tell every desktop
-                            set picture to "%s"
-                        end tell
-                    end tell
+                        -- Adding a login item for the current user
+                        make new login item at end of login items with properties {path:"/Applications/Live Himawari.app", hidden:false}
+                    end tell`
                 """
     subprocess.Popen(SCRIPT%final_output, shell=True)
+
+# modified from https://stackoverflow.com/a/65947716
+# this will set an image to wallpaper of all screens using center and black fill
+from AppKit import NSWorkspace
+from AppKit import NSScreen
+from AppKit import NSColor
+
+from AppKit import NSWorkspaceDesktopImageScalingKey
+from AppKit import NSWorkspaceDesktopImageFillColorKey
+from AppKit import NSImageScaleNone
+
+from Foundation import NSURL
+from Foundation import NSDictionary
+
+def set_wallpaper(img_path):
+    image_URL = NSURL.fileURLWithPath_(img_path)
+    shared_space = NSWorkspace.sharedWorkspace()
+    all_screens = NSScreen.screens()
+    fill_colour = NSColor.blackColor()
+
+    opt_Dict = NSDictionary.dictionaryWithObjects_forKeys_([NSImageScaleNone, fill_colour], [NSWorkspaceDesktopImageScalingKey,NSWorkspaceDesktopImageFillColorKey])
+
+    for screen in all_screens:
+        shared_space.setDesktopImageURL_forScreen_options_error_(image_URL, screen, opt_Dict, None)

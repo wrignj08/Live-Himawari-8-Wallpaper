@@ -1,1 +1,1 @@
-pyinstaller --onefile --windowed --icon app_icon.icns --noconsole --onefile Live_Himawari.spec Live_Himawari.py  
+pyinstaller --onefile --windowed --icon app_icon.icns --noconsole --onedir Live_Himawari.spec Live_Himawari.py  

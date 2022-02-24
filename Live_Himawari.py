@@ -106,6 +106,16 @@ def set_icon_check_mark():
 # build menu list for icon options
 icon_menu = [rumps.MenuItem(icon,callback=change_icon) for icon in icons]
 
+def toggle_auto_start(sender):
+    if funcs.check_if_in_apps_folder():
+        # toggle state
+        sender.state = not sender.state
+        # based on state add or more from login items
+        if sender.state:
+            funcs.add_to_login_items()
+        else:
+            funcs.remove_from_login_items()
+
 # recalc image age every 30 secs
 @rumps.timer(30)
 def update_age(_):
@@ -122,18 +132,31 @@ res_options = ('1100x1100', '2200x2200', '4400x4400', '8800x8800','16000x16000')
 # build resolution menu
 res_menu = [rumps.MenuItem(res_str,callback=set_res) for res_str,res_int in zip(res_options,range(0,5))]
 
+# check if app in in apps folder, if not add a warning to menu
+def location_warning():
+    if funcs.check_if_in_apps_folder():
+        return(None)
+    else:
+        return(rumps.MenuItem("⚠️ Please move app to apps folder"))
+
 # make menu item structure
 app.menu = [rumps.MenuItem("👌 Running",callback=onoff),
             [rumps.MenuItem('🖥️ Resolution'), res_menu],
             [rumps.MenuItem('😃 Icon'), icon_menu],
+            rumps.MenuItem('🚀 Launch at startup',callback=toggle_auto_start),
             rumps.MenuItem("↻ Refresh now",callback=refresh),
             None,
+            location_warning(),
             rumps.MenuItem("Age"),
             rumps.MenuItem("State"),
             rumps.MenuItem("⎋ Quit",callback=clean_up_before_quit)]
 
 # now that the menu is created add a check mark to Active and on the current resolution
 app.menu["👌 Running"].state = 1
+
+# set state of auto start toggle based on system prefs
+app.menu["🚀 Launch at startup"].state = funcs.check_if_in_login_items()
+
 set_res_check_mark()
 set_icon_check_mark()
 # get things running
