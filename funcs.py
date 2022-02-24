@@ -57,7 +57,7 @@ def write_settings(settings):
 # set text state in settings json file
 def set_state(text):
     settings = get_settings()
-    settings['state'] = '⚙️ '+text
+    settings['state'] = text
     write_settings(settings)
 
 def read_state():
@@ -78,7 +78,7 @@ def get_latest_time():
             latest_time = latest_time.replace(':','')
             # print(f'Download date is {latest_date}, download time is {latest_time}')
         except:
-            set_state('Failed to contact server')
+            set_state('⚠️ Failed to contact server')
             print('Failed to download json')
             sleep(2)
 
@@ -101,7 +101,7 @@ def image_age_str():
 
     if image_age<(60*60):
         friendly_age = f'{round(image_age/60)} mins'
-    return f'⏳ Image is {friendly_age} old'
+    return f'⏱️ Image is {friendly_age} old'
 
 
 # open image with PIL and make sure it is valid
@@ -129,7 +129,7 @@ def download(download_url, full_path):
             else:
                 raise IOError('Failed to verify image')
         except Exception as e:
-            set_state('Having trouble downloading images')
+            set_state('⚠️ Having trouble downloading images')
             print(f'failed to downlaod image {download_url} retrying {e}')
             sleep(2)
 

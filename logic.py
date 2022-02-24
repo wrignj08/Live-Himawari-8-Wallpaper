@@ -24,7 +24,7 @@ def main():
     if verbose:
         print('started main')
 
-    funcs.set_state('Starting')
+    funcs.set_state('🥾 Starting')
     # keep looping untill told to stop
     while True:
 
@@ -36,7 +36,7 @@ def main():
         if not live:
             if verbose:
                 print('stopped')
-            funcs.set_state('Stopped')
+            funcs.set_state('🛑 Stopped')
             # break look if no longer live
             break
 
@@ -78,7 +78,7 @@ def main():
             # downlaod multible images at one to speed up the process
             if verbose:
                 print('downloading tiles')
-            funcs.set_state('Downloading tiles')
+            funcs.set_state('⬇ Downloading tiles')
             # download images
             with ThreadPool(thread_count) as tp:
                 files = list(tp.imap(funcs.prep_download,args))
@@ -86,7 +86,7 @@ def main():
             # mosaic all images
             if verbose:
                 print('making mosaic')
-            funcs.set_state('Making mosaic')
+            funcs.set_state('🛠️ Making mosaic')
 
             # make mosaic using PIL
             mosaiced_image = funcs.PIL_mosaic(files,array_px)
@@ -133,7 +133,7 @@ def main():
                 else:
                     sleep_time_remaining_str = f'{sleep_time_remaining} secs'
 
-                funcs.set_state(f'Next check in {sleep_time_remaining_str}')
+                funcs.set_state(f'⏳ Next check in {sleep_time_remaining_str}')
                 # check the settings file
                 settings = funcs.get_settings()
                 # if live is False end sleep early
@@ -141,7 +141,7 @@ def main():
                     break
                 # if refresh is set end sleep early
                 if bool(settings['refresh']):
-                    funcs.set_state('Refreshing')
+                    funcs.set_state('↻ Refreshing')
                     # remove old wallpaper
                     if os.path.isfile(final_output):
                         os.remove(final_output)
