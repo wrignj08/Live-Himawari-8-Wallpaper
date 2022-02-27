@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import subprocess
 import requests
@@ -158,30 +159,26 @@ def PIL_mosaic(files,array_px):
         mosaic.paste(file_open, (abs_x, abs_y))
     return mosaic
 
-# use apple script to apply wallpaper to all screens
-# def set_wallpaper(final_output):
-#
-#     SCRIPT = """/usr/bin/osascript<<END
-#                     tell application "System Events"
-#                         tell every desktop
-#                             set picture to "%s"
-#                         end tell
-#                     end tell
-#                 """
-#     subprocess.Popen(SCRIPT%final_output, shell=True)
-
-
-
-def check_if_in_apps_folder():
-    return(os.path.isdir('/Applications/Live Himawari.app'))
+# get the path to the app
+def get_app_path():
+    full_app_path = os.path.dirname(sys.executable)
+    if '.app' in full_app_path:
+        clean_app_path = full_app_path.split('.app')[0]+'.app'
+    # if not in app mode (for testing) just assume there is an app version in apps folder
+    else:
+        clean_app_path = '/Applications/Live Himawari.app'
+    print(clean_app_path)
+    return clean_app_path
 
 def add_to_login_items():
+    print(get_app_path())
     SCRIPT = """/usr/bin/osascript<<END
-                    tell application "System Events" to make login item at end with properties {name: "Live Himawari",path:"/Applications/Live Himawari.app", hidden:false}
+                    tell application "System Events" to make login item at end with properties {name: "Live Himawari",path:"%s", hidden:false}
                   """
-    subprocess.Popen(SCRIPT, shell=True)
+    subprocess.Popen(SCRIPT%get_app_path(), shell=True)
 
 def remove_from_login_items():
+    print('remove')
     SCRIPT = """/usr/bin/osascript<<END
                     try
 	                   tell application "System Events" to delete login item "Live Himawari"
@@ -196,16 +193,6 @@ def check_if_in_login_items():
     proc = subprocess.Popen(['osascript', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     login_items, error = proc.communicate(login_items)
     return 'Live Himawari' in login_items
-
-
-def set_wallpaper():
-    SCRIPT = """/usr/bin/osascript<<END
-                    tell application "System Events"
-                        -- Adding a login item for the current user
-                        make new login item at end of login items with properties {path:"/Applications/Live Himawari.app", hidden:false}
-                    end tell`
-                """
-    subprocess.Popen(SCRIPT%final_output, shell=True)
 
 # modified from https://stackoverflow.com/a/65947716
 # this will set an image to wallpaper of all screens using center and black fill
