@@ -7,6 +7,8 @@ from PIL import Image
 import datetime
 from time import sleep
 from pathlib import Path
+import re
+
 
 def get_working_dir():
     return os.path.expanduser("~/Documents/Live Himawari files")
@@ -44,7 +46,8 @@ def get_settings():
         # the image time GMT
         'time': '',
         # menu icon
-        'icon': '🌏'}
+        'icon': '🌏',
+        'fit': 'Center'}
         write_settings(settings)
 
     return settings
@@ -203,17 +206,25 @@ from AppKit import NSColor
 from AppKit import NSWorkspaceDesktopImageScalingKey
 from AppKit import NSWorkspaceDesktopImageFillColorKey
 from AppKit import NSImageScaleNone
+from AppKit import NSImageScaleProportionallyUpOrDown
 
 from Foundation import NSURL
 from Foundation import NSDictionary
 
 def set_wallpaper(img_path):
+    fit = get_settings()['fit']
+
+    if fit == 'Fill':
+        fit_type = NSImageScaleProportionallyUpOrDown
+    if fit == 'Center':
+        fit_type = NSImageScaleNone
+
     image_URL = NSURL.fileURLWithPath_(img_path)
     shared_space = NSWorkspace.sharedWorkspace()
     all_screens = NSScreen.screens()
     fill_colour = NSColor.blackColor()
 
-    opt_Dict = NSDictionary.dictionaryWithObjects_forKeys_([NSImageScaleNone, fill_colour], [NSWorkspaceDesktopImageScalingKey,NSWorkspaceDesktopImageFillColorKey])
+    opt_Dict = NSDictionary.dictionaryWithObjects_forKeys_([fit_type, fill_colour], [NSWorkspaceDesktopImageScalingKey,NSWorkspaceDesktopImageFillColorKey])
 
     for screen in all_screens:
         shared_space.setDesktopImageURL_forScreen_options_error_(image_URL, screen, opt_Dict, None)

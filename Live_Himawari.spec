@@ -41,6 +41,7 @@ exe = EXE(pyz,
 app = BUNDLE(exe,
              name='Live Himawari.app',
              icon='app_icon.icns',
+             version='1.2',
              bundle_identifier=None,
              info_plist={
                 'LSUIElement': 'True'
