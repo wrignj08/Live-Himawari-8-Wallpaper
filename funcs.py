@@ -9,7 +9,8 @@ from time import sleep
 from pathlib import Path
 import re
 
-
+sf_warning = '􀇾'
+sf_stopwatch = '􀐯'
 def get_working_dir():
     return os.path.expanduser("~/Documents/Live Himawari files")
 
@@ -40,7 +41,7 @@ def get_settings():
         # set to True if the user requests a refresh
         'refresh': False,
         # state to display menu bar
-        'state': 'Starting',
+        'state': '',
         # the image date GMT
         'date': '',
         # the image time GMT
@@ -73,7 +74,9 @@ def get_latest_time():
     url = 'https://himawari8.nict.go.jp/img/D531106/latest.json'
     latest_time = None
     # keep looping untill we get the json downloaded
+    count = 0
     while latest_time is None:
+        count += 1
         try:
             # print('trying to downlaod latest.json')
             response_json = requests.get(url, timeout=20)
@@ -82,7 +85,7 @@ def get_latest_time():
             latest_time = latest_time.replace(':','')
             # print(f'Download date is {latest_date}, download time is {latest_time}')
         except:
-            set_state('⚠️ Failed to contact server')
+            set_state(f'{sf_warning}Failed to contact server {count}')
             print('Failed to download json')
             sleep(2)
 
@@ -98,14 +101,29 @@ def image_age_str():
     utc_now = datetime.datetime.utcnow()
     image_age = (utc_now-image_time).total_seconds()
 
-    friendly_age = f'{round(image_age/(60*60*24))} days'
+    hours = round(image_age/(60*60*24))
+    if hours > 1:
+        day_days = 'days'
+    else:
+        day_days = 'day'
+    friendly_age = f'{hours} {day_days}'
 
     if image_age<(60*60*24):
-        friendly_age = f'{round(image_age/(60*60))} hours'
+        hours = round(image_age/(60*60))
+        if hours > 1:
+            hour_hours = 'hours'
+        else:
+            hour_hours = 'hour'
+        friendly_age = f'{hours} {hour_hours}'
 
     if image_age<(60*60):
-        friendly_age = f'{round(image_age/60)} mins'
-    return f'⏱️ Image is {friendly_age} old'
+        mins = round(image_age/60)
+        if mins > 1:
+            min_mins = 'mins'
+        else:
+            min_mins = 'min'
+        friendly_age = f'{mins} {min_mins}'
+    return f'{sf_stopwatch} Image is {friendly_age} old'
 
 
 # open image with PIL and make sure it is valid
@@ -122,6 +140,7 @@ def verify_image(fn):
 # download image to file path, if failed retry, if image is broken retry
 def download(download_url, full_path):
     done = False
+    count = 0
     while not done:
         try:
             tile_data = requests.get(download_url, timeout=30)
@@ -133,9 +152,11 @@ def download(download_url, full_path):
             else:
                 raise IOError('Failed to verify image')
         except Exception as e:
-            set_state('⚠️ Having trouble downloading images')
+            count+=1
+            set_state(f'{sf_warning} Having trouble downloading images {count}')
             print(f'failed to downlaod image {download_url} retrying {e}')
             sleep(2)
+
 
 #  create download url and file path then pass to downlaod func
 def prep_download(args):

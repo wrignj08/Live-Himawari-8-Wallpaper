@@ -3,6 +3,21 @@ import logic
 import funcs
 import pathlib
 
+sf_play = '􀊄  '
+sf_refresh = '􀅈 '
+sf_gear = '􀍟 '
+sf_info = '􀅴  '
+sf_quit = '􀁠  '
+sf_display = '􀢹 '
+sf_display_center = '􀥝 '
+sf_display_fill = '􀢿 '
+sf_imac = '􀙗'
+sf_laptop = '􀙗'
+sf_globe_1 = '􀆪'
+sf_globe_2 = '􀵵'
+sf_globe_3 = '􀵶'
+sf_login = '􀷀  '
+
 # make image and settings folder
 print(funcs.get_image_dir())
 pathlib.Path(funcs.get_image_dir()).mkdir(parents=True, exist_ok=True)
@@ -16,12 +31,12 @@ def onoff(sender):
         print(sender.state)
     if sender.state:
         start()
-        sender.title = '👌 Running'
+        sender.title = sf_play+'Running'
         app.title = funcs.get_settings()['icon']
     else:
         stop()
-        sender.title = '🛑 Stopped'
-        app.title = '🛑'
+        sender.title = '􀟋 Stopped'
+        app.title = '􀟋'
 
 # will start the logic thread
 def start():
@@ -59,10 +74,10 @@ def clean_up_before_quit(_):
 def set_res_check_mark():
     # remove all check marks
     for res_string in res_options:
-        app.menu['⚙️ Settings']['🖥️ Resolution'][res_string].state = 0
+        app.menu[sf_gear+'Settings'][sf_display+'Resolution'][res_string].state = 0
     # add check mark to new quality value
     res_int = funcs.get_settings()['quality']
-    app.menu['⚙️ Settings']['🖥️ Resolution'][res_options[res_int]].state = 1
+    app.menu[sf_gear+'Settings'][sf_display+'Resolution'][res_options[res_int]].state = 1
 
 
 # set the new res to settings file, then force a reset
@@ -81,27 +96,32 @@ app = rumps.App("Live Himawari",quit_button=None, title=funcs.get_settings()['ic
 # starts logic thread at startup
 start()
 
-icons = ['🌏','🌐','🛰','🔭','📡','🚀','👩‍🚀','👨‍🚀']
+icons = ['🌏','🌐','🛰','🔭','📡','🚀','👩‍🚀','👨‍🚀',sf_display,sf_imac,sf_laptop,sf_globe_1,sf_globe_2,sf_globe_3]
 
 # will change menu icon and save to settings
 def change_icon(icon_menu):
     icon = icon_menu.title
-
     settings = funcs.get_settings()
     settings['icon'] = icon
     funcs.write_settings(settings)
-
-    app.title = icon
+    # app.title = icon
+    set_icon()
     set_icon_check_mark()
+
+def set_icon():
+    settings = funcs.get_settings()
+    icon = settings['icon']
+    app.title = icon
 
 # remove check marks from icon menu then add it to selection
 def set_icon_check_mark():
     # remove all check marks
     for icon in icons:
-        app.menu['⚙️ Settings']['😃 Icon'][icon].state = 0
+        app.menu[sf_gear+'Settings']['😃 Icon'][icon].state = 0
     # add check mark to new quality value
     icon = funcs.get_settings()['icon']
-    app.menu['⚙️ Settings']['😃 Icon'][icon].state = 1
+    app.menu[sf_gear+'Settings']['😃 Icon'][icon].state = 1
+    app.menu[sf_gear+'Settings']['😃 Icon'].title = icon+' Icon'
 
 # build menu list for icon options
 icon_menu = [rumps.MenuItem(icon,callback=change_icon) for icon in icons]
@@ -134,25 +154,30 @@ res_menu = [rumps.MenuItem(res_str,callback=set_res) for res_str,res_int in zip(
 
 # will change menu icon and save to settings
 def set_fit(fit_menu):
-
     fit = fit_menu.title
+    print(fit)
     settings = funcs.get_settings()
-    settings['fit'] = fit
+    settings['fit'] = fit.split(' ')[1]
     funcs.write_settings(settings)
     set_fit_check_mark()
     funcs.set_wallpaper(funcs.get_settings()['wp_path'])
-
 
 # remove check marks from icon menu then add it to selection
 def set_fit_check_mark():
     # remove all check marks
     for fit in fit_options:
-        app.menu['⚙️ Settings']['⇱⇲  Fit'][fit].state = 0
+        app.menu[sf_gear+'Settings'][sf_display_fill+'Fit'][fit].state = 0
     # add check mark to new quality value
     fit = funcs.get_settings()['fit']
-    app.menu['⚙️ Settings']['⇱⇲  Fit'][fit].state = 1
+    if 'Fill' in fit:
+        fit = sf_display_fill+'Fill'
+        app.menu[sf_gear+'Settings'][sf_display_fill+'Fit'].title = sf_display_fill+'Fit'
+    else:
+        fit = sf_display_center+'Center'
+        app.menu[sf_gear+'Settings'][sf_display_fill+'Fit'].title = sf_display_center+'Fit'
+    app.menu[sf_gear+'Settings'][sf_display_fill+'Fit'][fit].state = 1
 
-fit_options = ['Fill','Center']
+fit_options = [sf_display_fill+'Fill',sf_display_center+'Center']
 
 # fit_menu = [rumps.MenuItem(fit_options[0],callback=set_fit),
             # rumps.MenuItem(fit_options[1],callback=set_fit)]
@@ -164,7 +189,7 @@ fit_menu = [rumps.MenuItem(fil,callback=set_fit) for fil in fit_options]
 def configuration_window(sender):
     window = rumps.Window(
         title='Live Himawari',
-        message=f'Version 1.2\n https://github.com/wrignj08/Live_Himawari',
+        message=f'Version 1.3\n https://github.com/wrignj08/Live_Himawari',
         dimensions=(120, 0),
         ok='Close',
     )
@@ -172,28 +197,29 @@ def configuration_window(sender):
 
 
 # make menu item structure
-app.menu = [rumps.MenuItem("👌 Running",callback=onoff),
-            [rumps.MenuItem("⚙️ Settings"),[
-            [rumps.MenuItem("🖥️ Resolution"), res_menu],
-            [rumps.MenuItem("⇱⇲  Fit"), fit_menu],
+app.menu = [rumps.MenuItem(sf_play+"Running",callback=onoff),
+            rumps.MenuItem(sf_refresh+"Refresh now",callback=refresh),
+            [rumps.MenuItem(sf_gear+'Settings'),[
+            [rumps.MenuItem(sf_display+"Resolution"), res_menu],
+            [rumps.MenuItem(sf_display_fill+"Fit"), fit_menu],
             [rumps.MenuItem("😃 Icon"), icon_menu],
-            rumps.MenuItem("🚀 Launch at startup",callback=toggle_auto_start)
+            rumps.MenuItem(sf_login+"Launch at startup",callback=toggle_auto_start)
             ]],
-            rumps.MenuItem("📝 About",callback=configuration_window),
-            rumps.MenuItem(" ↻ Refresh now",callback=refresh),
+            rumps.MenuItem(sf_info+"About",callback=configuration_window),
             None,
             rumps.MenuItem("Age"),
             rumps.MenuItem("State"),
-            rumps.MenuItem(" ⎋ Quit",callback=clean_up_before_quit)]
+            rumps.MenuItem(sf_quit+"Quit",callback=clean_up_before_quit)]
 
 # now that the menu is created add a check mark to Active and on the current resolution
-app.menu["👌 Running"].state = 1
+app.menu[sf_play+"Running"].state = 1
 
 # set state of auto start toggle based on system prefs
-app.menu['⚙️ Settings']["🚀 Launch at startup"].state = funcs.check_if_in_login_items()
+app.menu[sf_gear+'Settings'][sf_login+"Launch at startup"].state = funcs.check_if_in_login_items()
 
 set_res_check_mark()
 set_icon_check_mark()
 set_fit_check_mark()
+set_icon()
 # get things running
 app.run()
