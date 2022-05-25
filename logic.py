@@ -15,12 +15,12 @@ freeze_support()
 
 verbose = True
 
-sf_hourglass = '  􀖇  '
-sf_play = '􀊃  '
-sf_stop = '􀟋 '
-sf_download = '􀁸 '
-sf_working = '􀤊'
-sf_refresh = '􀅈 '
+sf_hourglass = '⧖  '
+sf_play = '▶ '
+sf_stop = '■ '
+sf_download = '⬇ '
+sf_working = '⚙ '
+sf_refresh = '↻ '
 
 def main_thread():
     thread = threading.Thread(target=lambda: threading.Thread(target=main(),daemon = True))

@@ -9,8 +9,8 @@ from time import sleep
 from pathlib import Path
 import re
 
-sf_warning = '􀇾'
-sf_stopwatch = '􀐯'
+sf_warning = '⚠ '
+sf_stopwatch = ' ◷  '
 def get_working_dir():
     return os.path.expanduser("~/Documents/Live Himawari files")
 

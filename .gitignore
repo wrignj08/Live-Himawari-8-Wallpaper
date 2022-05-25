@@ -12,3 +12,5 @@ __pycache__/
 .eggs/py2app-0.26.1-py3.8.egg/py2app/recipes/
 
 *.png
+
+dist/Live Himawari.app/Contents/MacOS/Live_Himawari

@@ -3,20 +3,32 @@ import logic
 import funcs
 import pathlib
 
-sf_play = '􀊄  '
-sf_refresh = '􀅈 '
-sf_gear = '􀍟 '
-sf_info = '􀅴  '
-sf_quit = '􀁠  '
-sf_display = '􀢹 '
-sf_display_center = '􀥝 '
-sf_display_fill = '􀢿 '
-sf_imac = '􀙗'
-sf_laptop = '􀙗'
-sf_globe_1 = '􀆪'
-sf_globe_2 = '􀵵'
-sf_globe_3 = '􀵶'
-sf_login = '􀷀  '
+# sf_play = '􀊄  '
+# sf_stop = '􀟋 '
+# sf_refresh = '􀅈 '
+# sf_gear = '􀍟 '
+# sf_info = '􀅴  '
+# sf_quit = '􀁠  '
+# sf_display = '􀢹 '
+# sf_display_center = '􀥝 '
+# sf_display_fill = '􀢿 '
+# sf_imac = '􀙗'
+# sf_laptop = '􀙗'
+# sf_globe_1 = '􀆪'
+# sf_globe_2 = '􀵵'
+# sf_globe_3 = '􀵶'
+# sf_login = '􀷀  '
+
+sf_play = '▶ '
+sf_stop = '■ '
+sf_refresh = '↻ '
+sf_gear = ' ⚙  '
+sf_info = ' ℹ '
+sf_quit = '⎋ '#✖
+sf_display = '🖥️ '
+sf_display_center = '▣ '
+sf_display_fill = '■ '
+sf_login = '🚀'
 
 # make image and settings folder
 print(funcs.get_image_dir())
@@ -35,8 +47,8 @@ def onoff(sender):
         app.title = funcs.get_settings()['icon']
     else:
         stop()
-        sender.title = '􀟋 Stopped'
-        app.title = '􀟋'
+        sender.title = sf_stop+'Stopped'
+        app.title = sf_stop
 
 # will start the logic thread
 def start():
@@ -91,12 +103,14 @@ def set_res(sender):
     set_res_check_mark()
 
 # setup rumps app
-app = rumps.App("Live Himawari",quit_button=None, title=funcs.get_settings()['icon'])
+app = rumps.App("Live Himawari",
+                quit_button=None,
+                title=funcs.get_settings()['icon'])
 
 # starts logic thread at startup
 start()
 
-icons = ['🌏','🌐','🛰','🔭','📡','🚀','👩‍🚀','👨‍🚀',sf_display,sf_imac,sf_laptop,sf_globe_1,sf_globe_2,sf_globe_3]
+icons = ['🌏','🌐','🛰','🔭','📡','🚀','👩‍🚀','👨‍🚀','★','☆','✦','✧']
 
 # will change menu icon and save to settings
 def change_icon(icon_menu):
@@ -117,11 +131,11 @@ def set_icon():
 def set_icon_check_mark():
     # remove all check marks
     for icon in icons:
-        app.menu[sf_gear+'Settings']['😃 Icon'][icon].state = 0
+        app.menu[sf_gear+'Settings']['Icon'][icon].state = 0
     # add check mark to new quality value
     icon = funcs.get_settings()['icon']
-    app.menu[sf_gear+'Settings']['😃 Icon'][icon].state = 1
-    app.menu[sf_gear+'Settings']['😃 Icon'].title = icon+' Icon'
+    app.menu[sf_gear+'Settings']['Icon'][icon].state = 1
+    app.menu[sf_gear+'Settings']['Icon'].title = icon+' Icon'
 
 # build menu list for icon options
 icon_menu = [rumps.MenuItem(icon,callback=change_icon) for icon in icons]
@@ -202,7 +216,7 @@ app.menu = [rumps.MenuItem(sf_play+"Running",callback=onoff),
             [rumps.MenuItem(sf_gear+'Settings'),[
             [rumps.MenuItem(sf_display+"Resolution"), res_menu],
             [rumps.MenuItem(sf_display_fill+"Fit"), fit_menu],
-            [rumps.MenuItem("😃 Icon"), icon_menu],
+            [rumps.MenuItem("Icon"), icon_menu],
             rumps.MenuItem(sf_login+"Launch at startup",callback=toggle_auto_start)
             ]],
             rumps.MenuItem(sf_info+"About",callback=configuration_window),
